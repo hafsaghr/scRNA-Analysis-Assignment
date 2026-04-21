@@ -1,66 +1,40 @@
-# Single-Cell RNA-Seq Analysis (scRNA-seq)
+# Single-Cell RNA Sequencing (scRNA-seq) Analysis Pipeline
 
 ## Overview
-This project demonstrates a basic workflow for analyzing single-cell RNA sequencing (scRNA-seq) data using Python. The goal is to process and explore gene expression at the level of individual cells, allowing identification of distinct cell populations.
+This repository contains a modular computational pipeline for analyzing single-cell RNA sequencing (scRNA-seq) data using Python. The workflow demonstrates the transition from raw digital expression matrices to the identification of transcriptionally distinct cell populations.
 
-The dataset used in this project consists of Peripheral Blood Mononuclear Cells (PBMCs), which are commonly used for benchmarking scRNA-seq pipelines.
-
----
-
-## Objectives
-- Perform initial exploration of single-cell data
-- Apply quality control filtering to remove low-quality cells
-- Normalize gene expression values
-- Identify highly variable genes
-- Reduce dimensionality for visualization
-- Cluster cells into distinct groups
-- Visualize gene expression patterns
+The project is structured into three distinct analytical phases to ensure reproducibility and clean data management:
+1. **01_scrna-preprocessing-10x** — Data ingestion and statistical quality control.
+2. **02_basic-scrna-tutorial** — Dimensionality reduction, visualization, and unsupervised clustering.
+3. **03_anndata-tutorial** — Implementation and manipulation of the AnnData object standard.
 
 ---
 
-## Workflow
+## Technical Methodology
 
-### 1. Data Exploration
-The dataset is loaded and inspected to understand its structure, including the number of cells and genes.
+### Phase 1: Upstream Processing & Quality Control
+The initial phase focuses on loading pre-computed 10X Genomics count matrices (3k PBMCs) and applying strict quality control measures to ensure downstream analysis is not affected by technical artifacts.
+* **Data Ingestion:** Utilizing the Scanpy library to load sparse `.mtx` feature-barcode matrices.
+* **Cell & Gene Filtering:** Removing low-quality droplets (cells with < 200 expressed genes) and rare transcripts (genes expressed in < 3 cells).
+* **Mitochondrial Filtering:** Excluding damaged or dying cells by filtering out barcodes with a high percentage of mitochondrial gene expression (>5%).
 
-### 2. Quality Control
-Cells with poor quality metrics are filtered out. This step ensures that downstream analysis is not affected by noise or technical artifacts.
+### Phase 2: Downstream Analysis & Clustering
+This phase leverages the Scanpy ecosystem to extract biological signals from the cleaned dataset.
+* **Normalization:** Log-transformation and scaling of raw counts to ensure comparability across cells.
+* **Feature Selection:** Identification of Highly Variable Genes (HVGs) to reduce background noise.
+* **Dimensionality Reduction:** Execution of Principal Component Analysis (PCA) to capture overarching variance, followed by Uniform Manifold Approximation and Projection (UMAP) for 2D visualization.
+* **Clustering:** Application of the Leiden community detection algorithm to group cells based on transcriptional similarities.
 
-### 3. Normalization
-Gene expression counts are normalized to make cells comparable across the dataset.
-
-### 4. Feature Selection
-Highly variable genes are selected as they contribute the most to differences between cells.
-
-### 5. Dimensionality Reduction
-Techniques such as PCA and UMAP are used to reduce the complexity of the data while preserving important patterns.
-
-### 6. Clustering
-Cells are grouped into clusters based on similarities in gene expression.
-
-### 7. Visualization
-Results are visualized using scatter plots to interpret clusters and gene expression patterns.
+### Phase 3: Data Management with AnnData
+A demonstration of the `AnnData` structure, the core framework used in single-cell Python ecosystems.
+* **Structure Visualization:** Exploring the `n_obs` (cells) and `n_vars` (genes) multi-dimensional arrays.
+* **Metadata Integration:** Managing observational cell metadata (`.obs`) and variable gene annotations (`.var`).
+* **Slicing Operations:** Executing efficient subsetting queries on the dataset.
 
 ---
 
-## Tools and Libraries
-- Python
-- Scanpy
-- NumPy
-- Pandas
-- Matplotlib
-
----
----
-
-## Conclusion
-This project provides a foundational understanding of scRNA-seq data analysis. The workflow can be extended with more advanced techniques such as differential gene expression analysis, cell type annotation, and trajectory inference.
-
----
-
-## Future Improvements
-- Add batch effect correction
-- Perform cell type annotation
-- Include differential expression analysis
-- Explore trajectory analysis
-
+## Core Technologies
+* **Language:** Python 3.x
+* **Bioinformatics Libraries:** `scanpy`, `anndata`, `leidenalg`
+* **Data Handling:** `pandas`, `numpy`
+* **Visualization:** `matplotlib`
